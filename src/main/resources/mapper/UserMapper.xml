@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.UserEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="userName" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="identity" jdbcType="TINYINT" property="identity" />
+        <result column="email" jdbcType="VARCHAR" property="email" />
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+        <result column="power" jdbcType="VARCHAR" property="power" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+    </resultMap>
+
+    <insert id="insertUser">
+        insert into at_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entity.userName != null">
+                `username`,
+            </if>
+            <if test="entity.password != null">
+                `password`,
+            </if>
+            <if test="entity.identity != null">
+                `identity`,
+            </if>
+            <if test="entity.email != null">
+                `email`,
+            </if>
+            <if test="entity.is_delete != null">
+                `is_delete`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=") " suffixOverrides=",">
+            <if test="entity.userName != null">
+                #{entity.username},
+            </if>
+            <if test="entity.password != null">
+                #{entity.password},
+            </if>
+            <if test="entity.identity != null">
+                #{entity.identity},
+            </if>
+            <if test="entity.email != null">
+                #{entity.email},
+            </if>
+            <if test="entity.is_delete != null">
+                #{entity.is_delete},
+            </if>
+        </trim>
+    </insert>
+    <insert id="addProjectUser" parameterType="com.annotation.tool.entity.UserEntity">
+        insert into at_user_project(user_id, project_id, power) value
+        (#{entity.id},#{entity.projectId},#{entity.power})
+    </insert>
+    <insert id="addUserForNew" parameterType="com.annotation.tool.entity.UserEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into at_user(userName,password,email) value
+        (#{entity.userName},#{entity.password},#{entity.email})
+    </insert>
+    <update id="updateUserToPasswordOREmail" parameterType="com.annotation.tool.entity.UserEntity">
+        update at_user
+        <set>
+            <if test="entity.password != null">
+                `password`=#{entity.password},
+            </if>
+            <if test="entity.email != null">
+                `email`=#{entity.email},
+            </if>
+            <if test="entity.identity != null">
+                `identity`=#{entity.identity},
+            </if>
+        </set>
+        <where>
+            `is_delete`=1
+            <if test="entity.userName != null">
+               and `username`=#{entity.userName}
+            </if>
+            <if test="entity.id != null">
+                and `id`=#{entity.id}
+            </if>
+        </where>
+    </update>
+    <update id="deleteUserByIsDelete" parameterType="com.annotation.tool.entity.UserEntity">
+        update at_user
+        <set>
+            `is_delete`=0
+        </set>
+        <where>
+            <if test="entity.id != null">
+                `id`=#{entity.id},
+            </if>
+            <if test="entity.userName != null">
+                `username`=#{entity.userName},
+            </if>
+            <if test="entity.password != null">
+                `password`=#{entity.password},
+            </if>
+            <if test="entity.email != null">
+                `email`=#{entity.email},
+            </if>
+            <if test="entity.identity != null">
+                `identity`=#{entity.identity},
+            </if>
+        </where>
+    </update>
+    <delete id="deleteUserProjectByIds" parameterType="java.util.List">
+        delete from at_user_project where project_id = #{projectId} and user_id in (
+            <foreach collection="list" item="entity" separator=",">
+                #{entity}
+            </foreach>
+        )
+    </delete>
+
+    <select id="selectUserByUserNameAndPassword" parameterType="com.annotation.tool.entity.UserEntity" resultType="com.annotation.tool.entity.UserEntity">
+        select * from at_user
+        <where>
+            `username`=#{userEntity.userName} and
+            `password`=#{userEntity.password} and
+            `is_delete`=1
+        </where>
+    </select>
+    <select id="selectUserByEmailAndPassword" parameterType="com.annotation.tool.entity.UserEntity" resultType="com.annotation.tool.entity.UserEntity">
+        select * from at_user
+        <where>
+            `email`=#{userEntity.email} and
+            `password`=#{userEntity.password} and
+            `is_delete`=1
+        </where>
+    </select>
+    <select id="selectUserListByProjectId" resultMap="BaseResultMap">
+        select * from at_user join bshe.at_user_project aup on at_user.id = aup.user_id where aup.project_id=#{projectId} and at_user.is_delete=1
+    </select>
+    <select id="checkSameEmailAndUserName" parameterType="com.annotation.tool.entity.UserEntity" resultType="java.lang.Integer">
+        select count(*) from at_user
+        <where>
+            <if test="entity.email != null">
+                email=#{entity.email} and
+            </if>
+            <if test="entity.userName != null">
+                username=#{entity.userName} and
+            </if>
+            is_delete = 1
+        </where>
+    </select>
+    <select id="getProjectUserByProjectId" parameterType="String" resultMap="BaseResultMap">
+        select u.*,power,project_id from at_user u join at_user_project p on u.id = p.user_id where p.project_id = #{projectId}
+    </select>
+    <select id="selectUserById" resultMap="BaseResultMap">
+        select * from at_user where id=#{entity.id} and is_delete = 1
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ContentRelationMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ContentRelationEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property= "projectId" />
+        <result column="project_content_id" jdbcType="VARCHAR" property="projectContentId" />
+        <result column="relation_name" jdbcType="VARCHAR" property="relationName" />
+        <result column="form" jdbcType="INTEGER" property="form" />
+        <result column="to" jdbcType="INTEGER" property="to" />
+        <result column="relation_id" jdbcType="VARCHAR" property="relationId" />
+    </resultMap>
+    <insert id="insertRelation">
+        insert into at_content_relation(project_id, project_content_id, relation_name, form, `to`, relation_id)
+        values (#{entity.projectId},#{entity.projectContentId},
+                #{entity.relationName},#{entity.form},#{entity.to},#{entity.relationId})
+    </insert>
+    <delete id="deleteEntity" parameterType="String">
+        delete from at_content_relation where project_id=#{entity.projectId} and project_content_id=#{entity.projectContentId}
+                                          and relation_id=#{entity.entityId}
+    </delete>
+    <delete id="deleteByProjectIdAndProjectContentId" parameterType="String">
+        delete from at_content_relation where project_id=#{projectId} and project_content_id=#{projectContentId}
+    </delete>
+    <select id="selectAllEntity" parameterType="String" resultMap="BaseResultMap">
+        select * from at_content_relation
+                 where project_id=#{projectId} and project_content_id=#{projectContentId}
+    </select>
+
+</mapper>

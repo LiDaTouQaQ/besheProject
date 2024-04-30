@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ProjectMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ProjectEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property= "projectId" />
+        <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="tag" jdbcType="VARCHAR" property="tag" />
+        <result column="work_num" jdbcType="BIGINT" property="workNum" />
+        <result column="complete_num" jdbcType="BIGINT" property="completeNum" />
+        <result column="create_date" jdbcType="DATE" property="createDate" />
+        <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+        <result column="is_allow_add" jdbcType="VARCHAR" property="isAllowAdd" />
+        <result column="is_order" jdbcType="VARCHAR" property="isOrder" />
+        <result column="is_relation" jdbcType="VARCHAR" property="isRelation" />
+        <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+    </resultMap>
+
+
+    <insert id="createProject">
+        insert into at_project
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entity.projectId != null">
+                `project_id`,
+            </if>
+            <if test="entity.projectName != null">
+                `project_name`,
+            </if>
+            <if test="entity.remark != null">
+                `remark`,
+            </if>
+            <if test="entity.tag != null">
+                `tag`,
+            </if>
+            <if test="entity.workNum != null">
+                `work_num`,
+            </if>
+            <if test="entity.completeNum != null">
+                `complete_num`,
+            </if>
+            <if test="entity.createDate != null">
+                `create_date`,
+            </if>
+            <if test="entity.createBy != null">
+                `create_by`,
+            </if>
+            <if test="entity.isAllowAdd != null">
+                `is_allow_add`,
+            </if>
+            <if test="entity.isOrder != null">
+                `is_order`,
+            </if>
+            <if test="entity.isRelation != null">
+                `is_relation`,
+            </if>
+            <if test="entity.isDelete != null">
+                `is_delete`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=") " suffixOverrides=",">
+            <if test="entity.projectId != null">
+                #{entity.projectId},
+            </if>
+            <if test="entity.projectName != null">
+                #{entity.projectName},
+            </if>
+            <if test="entity.remark != null">
+                #{entity.remark},
+            </if>
+            <if test="entity.tag != null">
+                #{entity.tag},
+            </if>
+            <if test="entity.workNum != null">
+                #{entity.workNum},
+            </if>
+            <if test="entity.completeNum != null">
+                #{entity.completeNum},
+            </if>
+            <if test="entity.createDate != null">
+                #{entity.createDate},
+            </if>
+            <if test="entity.createBy != null">
+                #{entity.createBy},
+            </if>
+            <if test="entity.isAllowAdd != null">
+                #{entity.isAllowAdd},
+            </if>
+            <if test="entity.isOrder != null">
+                #{entity.isOrder},
+            </if>
+            <if test="entity.isRelation != null">
+                #{entity.isRelation},
+            </if>
+            <if test="entity.isDelete != null">
+                #{entity.isDelete},
+            </if>
+        </trim>
+    </insert>
+    <update id="deleteProject" parameterType="java.util.List">
+        update at_project
+        <set>
+            `is_delete`=0
+        </set>
+        <where>
+            project_id in (
+        <foreach collection="list" item="entity" separator=",">
+            #{entity}
+        </foreach>
+            )
+        </where>
+    </update>
+    <select id="getProjectByCreateByPage" parameterType="String" resultMap="BaseResultMap">
+        select * from at_project where create_by = #{createBy} and is_delete=1
+    </select>
+    <select id="countProject" resultType="java.lang.Integer">
+        select count(*) from at_project where create_by = #{createBy} and is_delete=1
+    </select>
+</mapper>

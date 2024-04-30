@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ATEntityMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ATEntityEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="entity_name" jdbcType="VARCHAR" property="entityName" />
+        <result column="num" jdbcType="INTEGER" property="num" />
+        <result column="span_color" jdbcType="VARCHAR" property="spanColor" />
+    </resultMap>
+    <insert id="createATEntityBatch" parameterType="java.util.List">
+        insert into at_entity(project_id,entity_name,num,span_color)
+        values
+            <foreach collection="list" item="entity" separator=",">
+                (#{entity.projectId},#{entity.entityName},#{entity.num},#{entity.spanColor})
+            </foreach>
+    </insert>
+    <insert id="createATEntity" parameterType="com.annotation.tool.entity.ATEntityEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into at_entity(project_id,entity_name,num,span_color)
+        values (#{entity.projectId},#{entity.entityName},#{entity.num},#{entity.spanColor})
+    </insert>
+    <update id="updateEntity">
+        update at_entity
+            <set>
+                <if test="entity.entityName != null">
+                    entity_name = #{entity.entityName},
+                </if>
+                <if test="entity.num != null">
+                    num = #{entity.num},
+                </if>
+                <if test="entity.spanColor != null">
+                    span_color = #{entity.spanColor},
+                </if>
+            </set>
+        where project_id = #{entity.projectId} and id = #{entity.id}
+    </update>
+    <select id="getAllATEntityByProjectId" resultMap="BaseResultMap">
+        select * from at_entity where project_id = #{projectId}
+        <if test="start != null and end != null">
+            limit #{start},#{end}
+        </if>
+    </select>
+    <select id="getEntityByLikeEntityName" parameterType="String" resultMap="BaseResultMap">
+        select * from at_entity where project_id = #{projectId} and entity_name like concat('%',#{name},'%')
+    </select>
+    <select id="getEntityByEntityName" parameterType="String" resultMap="BaseResultMap">
+        select * from at_entity where project_id = #{projectId} and entity_name = #{entityName}
+    </select>
+    <select id="countEntity" resultType="java.lang.Integer">
+        select count(*) from at_entity where project_id = #{projectId}
+    </select>
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.RelationMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.RelationEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+        <result column="relation_name" jdbcType="VARCHAR" property="relationName" />
+        <result column="num" jdbcType="INTEGER" property="num" />
+        <result column="span_color" jdbcType="VARCHAR" property="spanColor" />
+    </resultMap>
+    <insert id="createRelationBatch" parameterType="java.util.List">
+        insert into at_relation(project_id,relation_name,num,span_color)
+        values
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.projectId},#{entity.relationName},#{entity.num},#{entity.spanColor})
+        </foreach>
+
+    </insert>
+    <insert id="createRelation">
+        insert into at_relation(project_id,relation_name,num,span_color)
+        values (#{entity.projectId},#{entity.relationName},#{entity.num},#{entity.spanColor})
+    </insert>
+    <select id="getAllRelationByProjectId" parameterType="String" resultMap="BaseResultMap">
+        select * from at_relation where project_id = #{projectId}
+        <if test="start != null and end != null">
+            limit #{start},#{end}
+        </if>
+    </select>
+    <select id="getRelationByLikeName" parameterType="String" resultMap="BaseResultMap">
+        select * from at_relation where project_id=#{projectId} and relation_name like concat('%',#{name},'%')
+    </select>
+    <select id="getRelationByRelationName" parameterType="String" resultMap="BaseResultMap">
+        select * from at_relation where project_id=#{projectId} and relation_name = #{relationName}
+    </select>
+    <select id="countRelation" resultType="java.lang.Integer">
+        select count(*) from at_relation where project_id = #{projectId}
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ExportMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ExportRelationEntity">
+        <result column="content" jdbcType="VARCHAR" property="contentText" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="idOne" jdbcType="VARCHAR" property="entityIdOne" />
+        <result column="entityOne" jdbcType="VARCHAR" property="entityOne" />
+        <result column="entityNameOne" jdbcType="VARCHAR" property="entityNameOne" />
+        <result column="startOne" jdbcType="VARCHAR" property="startOne" />
+        <result column="endOne" jdbcType="VARCHAR" property="endOne" />
+        <result column="idTwo" jdbcType="VARCHAR" property="entityIdTwo" />
+        <result column="entityTwo" jdbcType="VARCHAR" property="entityTwo" />
+        <result column="entityNameTwo" jdbcType="VARCHAR" property="entityNameTwo" />
+        <result column="startTwo" jdbcType="VARCHAR" property="startTwo" />
+        <result column="endTwo" jdbcType="VARCHAR" property="endTwo" />
+        <result column="relationName" jdbcType="VARCHAR" property="relationName" />
+    </resultMap>
+    <select id="getExportDateByProjectId" parameterType="String" resultMap="BaseResultMap">
+        SELECT c.test_content content,e1.to_relation_id idOne, e1.entity_content entityOne,e1.entity_name entityNameOne,e1.start startOne,e1.end endOne,e2.to_relation_id idTwo,e2.entity_content entityTwo,e2.entity_name entityNameTwo,e2.start startTwo,e2.end endTwo,r.relation_name relationName FROM at_content_entity e1
+            JOIN at_content_relation r ON e1.to_relation_id = r.`to`
+            JOIN at_content_entity e2 ON e2.to_relation_id = r.form
+            join at_project_content c on e1.project_content_id = c.content_id
+        WHERE e1.project_content_id = e2.project_content_id
+          AND r.project_content_id = e1.project_content_id
+          AND e1.project_id = e2.project_id
+          AND r.project_id = e1.project_id AND
+            e1.project_id = #{projectId}
+    </select>
+    <select id="getExportDateByProjectContentId" resultMap="BaseResultMap">
+        SELECT c.test_content content,e1.to_relation_id idOne, e1.entity_content entityOne,e1.entity_name entityNameOne,e1.start startOne,e1.end endOne,e2.to_relation_id idTwo,e2.entity_content entityTwo,e2.entity_name entityNameTwo,e2.start startTwo,e2.end endTwo,r.relation_name relationName FROM at_content_entity e1
+            JOIN at_content_relation r ON e1.to_relation_id = r.`to`
+            JOIN at_content_entity e2 ON e2.to_relation_id = r.form
+            join at_project_content c on e1.project_content_id = c.content_id
+        WHERE e1.project_content_id = e2.project_content_id
+          AND r.project_content_id = e1.project_content_id
+          AND e1.project_id = e2.project_id
+          AND r.project_id = e1.project_id
+          and e1.project_id = #{projectId}
+          AND
+            e1.project_content_id in (
+                <foreach collection="list" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+    </select>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ContentEntityMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ContentEntityEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property= "projectId" />
+        <result column="project_content_id" jdbcType="VARCHAR" property="projectContentId" />
+        <result column="entity_name" jdbcType="VARCHAR" property="entityName" />
+        <result column="start" jdbcType="INTEGER" property="start" />
+        <result column="end" jdbcType="INTEGER" property="end" />
+        <result column="entity_content" jdbcType="VARCHAR" property="entityContent" />
+        <result column="entity_id" jdbcType="INTEGER" property="entityId" />
+        <result column="span_color" jdbcType="VARCHAR" property="color" />
+        <result column="to_relation_id" jdbcType="VARCHAR" property="toRelationId" />
+    </resultMap>
+    <insert id="insertEntity">
+        insert into at_content_entity(project_id, project_content_id, entity_name, start, end, entity_content, entity_id, to_relation_id)
+        values (#{entity.projectId},#{entity.projectContentId},#{entity.entityName},
+                #{entity.start},#{entity.end},#{entity.entityContent},#{entity.entityId},#{entity.toRelationId})
+    </insert>
+    <insert id="insertEntityBatch" parameterType="java.util.List">
+        insert into at_content_entity(project_id, project_content_id, entity_name, start, end, entity_content, entity_id, to_relation_id)
+        values
+            <foreach collection="list" item="entity" separator=",">
+                (#{entity.projectId},#{entity.projectContentId},#{entity.entityName},
+                #{entity.start},#{entity.end},#{entity.entityContent},#{entity.entityId},#{entity.toRelationId})
+            </foreach>
+    </insert>
+    <delete id="deleteEntity">
+        delete from at_content_entity where project_id=#{entity.projectId} and project_content_id=#{entity.projectContentId}
+                                        and entity_id=#{entity.entityId}
+    </delete>
+    <delete id="deleteByProjectIdAndProjectContentId" parameterType="String">
+        delete from at_content_entity where project_id=#{projectId} and project_content_id=#{projectContentId}
+    </delete>
+    <select id="selectAllEntity" parameterType="String" resultMap="BaseResultMap">
+        select c.*,e.span_color from at_content_entity c join at_entity e on c.entity_id = e.id
+                 where c.project_id=#{projectId} and c.project_content_id=#{projectContentId}
+    </select>
+    <select id="getMaxToRelationIdByProjectIdAndProjectContentId" resultType="java.lang.Integer">
+        SELECT MAX(to_relation_id) FROM at_content_entity
+        WHERE project_id = #{projectId} AND project_content_id = #{projectContentId}
+    </select>
+</mapper>

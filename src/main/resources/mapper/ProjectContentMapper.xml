@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.annotation.tool.mapper.ProjectContentMapper">
+    <resultMap id="BaseResultMap" type="com.annotation.tool.entity.ProjectContentEntity">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="project_id" jdbcType="VARCHAR" property= "projectId" />
+        <result column="content_id" jdbcType="VARCHAR" property= "contentId" />
+        <result column="test_content" jdbcType="VARCHAR" property= "testContent" />
+        <result column="project_name" jdbcType="VARCHAR" property= "projectName" />
+        <result column="is_complete" jdbcType="VARCHAR" property="isComplete" />
+        <result column="complete_by" jdbcType="VARCHAR" property="completeBy" />
+    </resultMap>
+
+    <insert id="insertBatchProjectContent" parameterType="java.util.List">
+        insert into at_project_content(project_id,content_id,test_content,is_complete)
+        values
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.projectId},#{entity.contentId},#{entity.testContent},0)
+        </foreach>
+    </insert>
+    <insert id="insertProjectContent">
+        insert into at_project_content(project_id,content_id,test_content,is_complete)
+        values (#{entity.projectId},#{entity.contentId},#{entity.testContent},0)
+    </insert>
+    <update id="updateProjectContentById">
+        update at_project_content
+        <set>
+            <if test="entity.testContent != null">
+                test_content = #{entity.testContent},
+            </if>
+            <if test="entity.isComplete != null">
+                is_complete = #{entity.isComplete},
+            </if>
+            <if test="entity.completeBy != null">
+                complete_by = #{entity.completeBy}
+            </if>
+        </set>
+            where content_id = #{entity.contentId} and project_id = #{entity.projectId}
+    </update>
+    <delete id="deleteByContentIdAndProjectIdInt">
+        delete from at_project_content where project_id=#{projectId} and content_id=#{contentId}
+    </delete>
+    <delete id="deleteByProjectId">
+        delete from at_project_content where project_id=#{projectId}
+    </delete>
+    <select id="selectAllProjectContentByPage" parameterType="String" resultMap="BaseResultMap">
+        select c.*,p.project_name from at_project_content c join at_project p on c.project_id=p.project_id  where c.project_id = #{projectId}
+        <!-- <if test="start != null and end != null"> -->
+        <!--     limit #{start},#{end} -->
+        <!-- </if> -->
+    </select>
+    <select id="getDetailContentByProjectIdAndContentId" parameterType="String"
+            resultMap="BaseResultMap">
+        select c.*,p.project_name from at_project_content c join at_project p on c.project_id=p.project_id
+                                  where c.project_id = #{projectId} and c.content_id=#{contentId}
+    </select>
+    <select id="maxProjectContentIdByProjectId" resultType="java.lang.String">
+        select max(content_id) from at_project_content where project_id = #{projectId}
+    </select>
+    <select id="countByProjectIdInt" resultType="java.lang.Integer">
+        select count(*) from at_project_content where project_id = #{projectId}
+    </select>
+</mapper>
