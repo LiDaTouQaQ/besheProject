@@ -38,4 +38,6 @@ public interface ProjectContentController {
     void exportRelationJson(HttpServletResponse response, Map<String,Object> params) throws IOException;
 
     Result getCount(Map<String,Object> params);
+
+    Result createEntityAndRelation(ProjectContentEntity entity);
 }

@@ -37,12 +37,6 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public Result loginByToken(UserEntity user) {
-
-        return null;
-    }
-
-    @Override
     @PostMapping(value = "/register")
     public Result register(@RequestBody UserEntity user) {
         return userService.register(user);

@@ -15,8 +15,6 @@ import java.util.Map;
 public interface UserController {
     Result login( UserEntity user);
 
-    Result loginByToken(UserEntity user);
-
     Result register(UserEntity user);
 
     Result getProjectUser(String projectId);

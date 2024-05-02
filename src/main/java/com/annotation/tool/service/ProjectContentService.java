@@ -35,4 +35,6 @@ public interface ProjectContentService {
 
     Result getCount(String projectId);
 
+    Result addER(ProjectContentEntity entity);
+
 }

@@ -264,4 +264,17 @@ public class ProjectContentServiceImpl implements ProjectContentService {
         count.put("count",projectContentMapper.countByProjectIdInt(projectId));
         return ResultGeneratorUtil.genSuccessResult(count);
     }
+
+    @Override
+    public Result addER(ProjectContentEntity entity) {
+        ContentEntityEntity entityEntity = entity.getEntityEntityList().get(0);
+        ContentRelationEntity relationEntity = entity.getRelationEntityList().get(0);
+        int i = contentEntityMapper.insertEntity(entityEntity);
+        int j = contentRelationMapper.insertRelation(relationEntity);
+        if(i == j && j == 1){
+            return ResultGeneratorUtil.genSuccessResult();
+        }else{
+            return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR);
+        }
+    }
 }

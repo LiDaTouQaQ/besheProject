@@ -116,4 +116,10 @@ public class ProjectContentControllerImpl implements ProjectContentController {
     public Result getCount(@RequestBody Map<String, Object> params) {
         return projectContentService.getCount(MapUtils.getString(params,"projectId"));
     }
+
+    @Override
+    @PostMapping(value = "/createER")
+    public Result createEntityAndRelation(@RequestBody ProjectContentEntity entity) {
+        return projectContentService.addER(entity);
+    }
 }
