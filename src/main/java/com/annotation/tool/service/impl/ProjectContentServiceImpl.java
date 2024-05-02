@@ -242,7 +242,12 @@ public class ProjectContentServiceImpl implements ProjectContentService {
             return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR, "参数不全");
         }
         if(entity.getToRelationId() == null){
-            int maxId = contentEntityMapper.getMaxToRelationIdByProjectIdAndProjectContentId(entity.getProjectId(), entity.getProjectContentId());
+            int maxId = 0;
+            try {
+                maxId = contentEntityMapper.getMaxToRelationIdByProjectIdAndProjectContentId(entity.getProjectId(), entity.getProjectContentId());
+            }catch (Exception e){
+                maxId = 0;
+            }
             entity.setToRelationId(String.valueOf(maxId+1));
         }
         contentEntityMapper.insertEntity(entity);
@@ -266,12 +271,20 @@ public class ProjectContentServiceImpl implements ProjectContentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Result addER(ProjectContentEntity entity) {
-        ContentEntityEntity entityEntity = entity.getEntityEntityList().get(0);
+        ContentEntityEntity entityOneEntity = entity.getEntityEntityList().get(0);
+        ContentEntityEntity entityTwoEntity = entity.getEntityEntityList().get(1);
+        int maxRelationId = contentEntityMapper.getMaxToRelationIdByProjectIdAndProjectContentId(entity.getProjectId(), entity.getContentId());
+        entityOneEntity.setToRelationId(String.valueOf(maxRelationId+1));
+        entityTwoEntity.setToRelationId(String.valueOf(maxRelationId+2));
         ContentRelationEntity relationEntity = entity.getRelationEntityList().get(0);
-        int i = contentEntityMapper.insertEntity(entityEntity);
+        relationEntity.setForm(maxRelationId+1);
+        relationEntity.setTo(maxRelationId+2);
+        int i = contentEntityMapper.insertEntity(entityOneEntity);
+        int k = contentEntityMapper.insertEntity(entityTwoEntity);
         int j = contentRelationMapper.insertRelation(relationEntity);
-        if(i == j && j == 1){
+        if(i == j && k == i && j == 1){
             return ResultGeneratorUtil.genSuccessResult();
         }else{
             return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR);
