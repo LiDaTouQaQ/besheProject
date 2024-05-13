@@ -3,6 +3,7 @@ package com.annotation.tool.controller.impl;
 import cn.hutool.json.JSONUtil;
 import com.annotation.tool.controller.ProjectContentController;
 import com.annotation.tool.entity.ContentEntityEntity;
+import com.annotation.tool.entity.ContentRelationEntity;
 import com.annotation.tool.entity.ProjectContentEntity;
 import com.annotation.tool.entity.Result;
 import com.annotation.tool.mapper.ContentEntityMapper;
@@ -121,5 +122,24 @@ public class ProjectContentControllerImpl implements ProjectContentController {
     @PostMapping(value = "/createER")
     public Result createEntityAndRelation(@RequestBody ProjectContentEntity entity) {
         return projectContentService.addER(entity);
+    }
+
+    @Override
+    @PostMapping(value = "/deleteEntity")
+    public Result deleteEntity(@RequestBody ContentEntityEntity entity) {
+        return projectContentService.deleteEntity(entity);
+    }
+
+    @Override
+    @PostMapping(value = "/deleteRelation")
+    public Result deleteRelation(@RequestBody ContentRelationEntity entity) {
+        return projectContentService.deleteRelation(entity);
+    }
+
+    @Override
+    @PostMapping(value = "/userWork")
+    public Result countUserWork(@RequestBody Map<String, Object> params) {
+        String projectId = MapUtils.getString(params,"projectId");
+        return projectContentService.countUserWork(projectId);
     }
 }

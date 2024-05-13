@@ -60,4 +60,7 @@
     <select id="countByProjectIdInt" resultType="java.lang.Integer">
         select count(*) from at_project_content where project_id = #{projectId}
     </select>
+    <select id="countUserWorkByProjectIdAndUserId" resultType="java.lang.Integer">
+        select count(*) from at_project_content where project_id = #{projectId} and complete_by = #{userId}
+    </select>
 </mapper>

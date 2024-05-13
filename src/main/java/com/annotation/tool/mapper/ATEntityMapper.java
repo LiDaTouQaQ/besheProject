@@ -16,7 +16,7 @@ public interface ATEntityMapper {
 
     int createATEntityBatch(@Param("list") List<ATEntityEntity> entities);
 
-    List<ATEntityEntity> getAllATEntityByProjectId(@Param("projectId") String projectId, @Param("start") String start, @Param("end") String end);
+    List<ATEntityEntity> getAllATEntityByProjectId(@Param("projectId") String projectId);
 
     List<ATEntityEntity> getEntityByLikeEntityName(@Param("projectId") String projectId, @Param("name") String entityName);
 
@@ -25,4 +25,6 @@ public interface ATEntityMapper {
     int updateEntity(@Param("entity") ATEntityEntity entity);
 
     int countEntity(@Param("projectId") String projectId);
+
+    int addEntityNum(@Param("projectId") String projectId, @Param("entityId") String id);
 }

@@ -30,4 +30,5 @@ public interface ProjectContentMapper {
     String maxProjectContentIdByProjectId(@Param("projectId") String projectId);
 
     int countByProjectIdInt(@Param("projectId") String projectId);
+    int countUserWorkByProjectIdAndUserId(@Param("projectId") String projectId,@Param("userId") String userId);
 }

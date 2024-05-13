@@ -38,6 +38,8 @@ public class ProjectContentServiceImpl implements ProjectContentService {
     @Autowired
     RelationMapper relationMapper;
 
+    @Autowired
+    UserMapper userMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Result createBatchContent(List<ProjectContentEntity> projectContentEntities) {
@@ -117,6 +119,7 @@ public class ProjectContentServiceImpl implements ProjectContentService {
                     ATEntityEntity projectEntity = atEntityMapper.getEntityByEntityName(projectId,subjectType);
                     if(projectEntity != null){
                         entity1.setEntityId(Integer.valueOf(projectEntity.getId()));
+                        atEntityMapper.addEntityNum(projectId,projectEntity.getId());
                     }else{
                         projectEntity = new ATEntityEntity();
                         projectEntity.setProjectId(projectId);
@@ -147,6 +150,7 @@ public class ProjectContentServiceImpl implements ProjectContentService {
                     ATEntityEntity projectEntity = atEntityMapper.getEntityByEntityName(projectId,subjectType);
                     if(projectEntity != null){
                         entity2.setEntityId(Integer.valueOf(projectEntity.getId()));
+                        atEntityMapper.addEntityNum(projectId,projectEntity.getId());
                     }else{
                         projectEntity = new ATEntityEntity();
                         projectEntity.setProjectId(projectId);
@@ -180,6 +184,7 @@ public class ProjectContentServiceImpl implements ProjectContentService {
                         }
                         relation.setRelationName(relationName);
                         relation.setRelationId(Integer.valueOf(relationEntity.getId()));
+                        relationMapper.addRelationNum(projectId,relationEntity.getId());
                         relationId++;
                         contentRelationMapper.insertRelation(relation);
                     }
@@ -251,6 +256,7 @@ public class ProjectContentServiceImpl implements ProjectContentService {
             entity.setToRelationId(String.valueOf(maxId+1));
         }
         contentEntityMapper.insertEntity(entity);
+        atEntityMapper.addEntityNum(entity.getProjectId(), String.valueOf(entity.getEntityId()));
         return ResultGeneratorUtil.genSuccessResult("添加成功");
     }
 
@@ -275,19 +281,56 @@ public class ProjectContentServiceImpl implements ProjectContentService {
     public Result addER(ProjectContentEntity entity) {
         ContentEntityEntity entityOneEntity = entity.getEntityEntityList().get(0);
         ContentEntityEntity entityTwoEntity = entity.getEntityEntityList().get(1);
-        int maxRelationId = contentEntityMapper.getMaxToRelationIdByProjectIdAndProjectContentId(entity.getProjectId(), entity.getContentId());
-        entityOneEntity.setToRelationId(String.valueOf(maxRelationId+1));
-        entityTwoEntity.setToRelationId(String.valueOf(maxRelationId+2));
         ContentRelationEntity relationEntity = entity.getRelationEntityList().get(0);
-        relationEntity.setForm(maxRelationId+1);
-        relationEntity.setTo(maxRelationId+2);
-        int i = contentEntityMapper.insertEntity(entityOneEntity);
-        int k = contentEntityMapper.insertEntity(entityTwoEntity);
+        relationEntity.setForm(Integer.valueOf(entityOneEntity.getToRelationId()));
+        relationEntity.setTo(Integer.valueOf(entityTwoEntity.getToRelationId()));
+        relationEntity.setProjectContentId(entity.getContentId());
+        relationEntity.setRelationId(relationEntity.getId());
+        // int i = contentEntityMapper.insertEntity(entityOneEntity);
+        // int k = contentEntityMapper.insertEntity(entityTwoEntity);
         int j = contentRelationMapper.insertRelation(relationEntity);
-        if(i == j && k == i && j == 1){
+        relationMapper.addRelationNum(relationEntity.getProjectId(), String.valueOf(relationEntity.getRelationId()));
+        if(j == 1){
             return ResultGeneratorUtil.genSuccessResult();
         }else{
             return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR);
         }
+    }
+
+    @Override
+    public Result deleteEntity(ContentEntityEntity entity) {
+        if(entity.getId() == null){
+            return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR);
+        }
+        contentEntityMapper.deleteEntity(entity);
+        return ResultGeneratorUtil.genSuccessResult();
+    }
+
+    @Override
+    public Result deleteRelation(ContentRelationEntity entity) {
+        if(entity.getId() == null){
+            return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR);
+        }
+        contentRelationMapper.deleteEntity(entity);
+        return ResultGeneratorUtil.genSuccessResult();
+    }
+
+    @Override
+    public Result countUserWork(String projectId) {
+        List<UserEntity> userEntities = userMapper.getProjectUserByProjectId(projectId);
+        int sum = projectContentMapper.countByProjectIdInt(projectId);
+        List<Map<String,Object>> result = new ArrayList<>();
+        for(UserEntity user : userEntities){
+            Map<String,Object> map = new HashMap<>();
+            int num = projectContentMapper.countUserWorkByProjectIdAndUserId(projectId, String.valueOf(user.getId()));
+            Double percentage = (double) (num/sum*100);
+            map.put("userName",user.getUserName());
+            map.put("userId",user.getId());
+            map.put("completeNum",num);
+            map.put("percentage",percentage);
+            map.put("total",sum);
+            result.add(map);
+        }
+        return ResultGeneratorUtil.genSuccessResult(result);
     }
 }

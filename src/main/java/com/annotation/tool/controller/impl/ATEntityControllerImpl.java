@@ -47,8 +47,8 @@ public class ATEntityControllerImpl implements ATEntityController {
     @PostMapping("/getAll")
     public Result getAllATEntity(@RequestBody Map<String,Object> params) {
         String projectId = MapUtils.getString(params,"projectId");
-        String page = MapUtils.getString(params,"page","0");
-        String pageSize = MapUtils.getString(params,"pageSize","10");
+        String page = MapUtils.getString(params,"page","1");
+        String pageSize = MapUtils.getString(params,"pageSize","10000");
         return entityService.getAllEntityByProjectId(projectId,page,pageSize);
     }
 

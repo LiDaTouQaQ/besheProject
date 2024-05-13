@@ -20,6 +20,13 @@
         insert into at_relation(project_id,relation_name,num,span_color)
         values (#{entity.projectId},#{entity.relationName},#{entity.num},#{entity.spanColor})
     </insert>
+    <update id="addRelationNum">
+        update at_relation
+        <set>
+            num = num+1
+        </set>
+        where project_id = #{projectId} and id = #{relationId}
+    </update>
     <select id="getAllRelationByProjectId" parameterType="String" resultMap="BaseResultMap">
         select * from at_relation where project_id = #{projectId}
         <if test="start != null and end != null">

@@ -19,6 +19,13 @@
         insert into at_entity(project_id,entity_name,num,span_color)
         values (#{entity.projectId},#{entity.entityName},#{entity.num},#{entity.spanColor})
     </insert>
+    <update id="addEntityNum">
+        update at_entity
+        <set>
+            num = num+1
+        </set>
+        where project_id = #{projectId} and id = #{entityId}
+    </update>
     <update id="updateEntity">
         update at_entity
             <set>
@@ -36,9 +43,6 @@
     </update>
     <select id="getAllATEntityByProjectId" resultMap="BaseResultMap">
         select * from at_entity where project_id = #{projectId}
-        <if test="start != null and end != null">
-            limit #{start},#{end}
-        </if>
     </select>
     <select id="getEntityByLikeEntityName" parameterType="String" resultMap="BaseResultMap">
         select * from at_entity where project_id = #{projectId} and entity_name like concat('%',#{name},'%')
@@ -49,4 +53,5 @@
     <select id="countEntity" resultType="java.lang.Integer">
         select count(*) from at_entity where project_id = #{projectId}
     </select>
+
 </mapper>

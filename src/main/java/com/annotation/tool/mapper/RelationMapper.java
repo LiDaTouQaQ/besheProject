@@ -20,4 +20,6 @@ public interface RelationMapper {
     List<RelationEntity> getRelationByLikeName(@Param("projectId") String projectId,@Param("name") String name);
     RelationEntity getRelationByRelationName(@Param("projectId") String projectId,@Param("relationName") String relationName);
     int countRelation(@Param("projectId") String projectId);
+
+    int addRelationNum(@Param("projectId") String projectId,@Param("relationId") String id);
 }

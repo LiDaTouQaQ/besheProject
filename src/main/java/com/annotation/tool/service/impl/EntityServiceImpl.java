@@ -42,7 +42,7 @@ public class EntityServiceImpl implements EntityService {
     public Result getAllEntityByProjectId(String projectId,String page,String pageSize) {
         try{
             PageHelper.startPage(Integer.parseInt(page),Integer.parseInt(pageSize));
-            List<ATEntityEntity> atEntityEntities = atEntityMapper.getAllATEntityByProjectId(projectId,null,null);
+            List<ATEntityEntity> atEntityEntities = atEntityMapper.getAllATEntityByProjectId(projectId);
             return ResultGeneratorUtil.genSuccessResult(atEntityEntities);
         }catch (Exception e){
             return ResultGeneratorUtil.genFailResult(ResultEnum.ERROR,"导入失败");

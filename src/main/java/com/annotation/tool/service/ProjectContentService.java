@@ -1,6 +1,7 @@
 package com.annotation.tool.service;
 
 import com.annotation.tool.entity.ContentEntityEntity;
+import com.annotation.tool.entity.ContentRelationEntity;
 import com.annotation.tool.entity.ProjectContentEntity;
 import com.annotation.tool.entity.Result;
 
@@ -36,5 +37,11 @@ public interface ProjectContentService {
     Result getCount(String projectId);
 
     Result addER(ProjectContentEntity entity);
+
+    Result deleteEntity(ContentEntityEntity entity);
+
+    Result deleteRelation(ContentRelationEntity entity);
+
+    Result countUserWork(String projectId);
 
 }

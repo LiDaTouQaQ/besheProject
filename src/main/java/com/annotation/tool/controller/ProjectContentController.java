@@ -1,6 +1,7 @@
 package com.annotation.tool.controller;
 
 import com.annotation.tool.entity.ContentEntityEntity;
+import com.annotation.tool.entity.ContentRelationEntity;
 import com.annotation.tool.entity.ProjectContentEntity;
 import com.annotation.tool.entity.Result;
 
@@ -40,4 +41,10 @@ public interface ProjectContentController {
     Result getCount(Map<String,Object> params);
 
     Result createEntityAndRelation(ProjectContentEntity entity);
+
+    Result deleteEntity(ContentEntityEntity entity);
+
+    Result deleteRelation(ContentRelationEntity entity);
+
+    Result countUserWork(Map<String,Object> params);
 }

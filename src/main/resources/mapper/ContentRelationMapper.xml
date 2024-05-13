@@ -15,9 +15,8 @@
         values (#{entity.projectId},#{entity.projectContentId},
                 #{entity.relationName},#{entity.form},#{entity.to},#{entity.relationId})
     </insert>
-    <delete id="deleteEntity" parameterType="String">
-        delete from at_content_relation where project_id=#{entity.projectId} and project_content_id=#{entity.projectContentId}
-                                          and relation_id=#{entity.entityId}
+    <delete id="deleteEntity">
+        delete from at_content_relation where id = #{entity.id}
     </delete>
     <delete id="deleteByProjectIdAndProjectContentId" parameterType="String">
         delete from at_content_relation where project_id=#{projectId} and project_content_id=#{projectContentId}
