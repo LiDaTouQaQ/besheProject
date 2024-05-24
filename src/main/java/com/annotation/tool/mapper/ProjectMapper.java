@@ -19,4 +19,5 @@ public interface ProjectMapper {
     List<ProjectEntity> getProjectByCreateByPage(String createBy);
 
     int countProject(@Param("createBy") String id);
+    ProjectEntity getByProjectIdProject(@Param("projectId") String projectId);
 }

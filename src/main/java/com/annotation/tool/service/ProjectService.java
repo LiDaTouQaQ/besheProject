@@ -15,6 +15,7 @@ public interface ProjectService {
     Result createProject(ProjectEntity projectEntity);
     Result selectProject(String id,Integer page,Integer pageSize);
     Result deleteProject(List<String> projectIds);
+    Result selectOneProject(String projectId);
 
     Result countProject(String id);
 }

@@ -15,6 +15,7 @@
         <result column="is_order" jdbcType="VARCHAR" property="isOrder" />
         <result column="is_relation" jdbcType="VARCHAR" property="isRelation" />
         <result column="is_delete" jdbcType="VARCHAR" property="isDelete" />
+        <result column="auto_port" jdbcType="VARCHAR" property="autoPort" />
     </resultMap>
 
 
@@ -57,6 +58,9 @@
             <if test="entity.isDelete != null">
                 `is_delete`,
             </if>
+            <if test="entity.autoPort != null">
+                `auto_port`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=") " suffixOverrides=",">
             <if test="entity.projectId != null">
@@ -95,6 +99,9 @@
             <if test="entity.isDelete != null">
                 #{entity.isDelete},
             </if>
+            <if test="entity.autoPort != null">
+                #{entity.autoPort},
+            </if>
         </trim>
     </insert>
     <update id="deleteProject" parameterType="java.util.List">
@@ -115,5 +122,8 @@
     </select>
     <select id="countProject" resultType="java.lang.Integer">
         select count(*) from at_project where create_by = #{createBy} and is_delete=1
+    </select>
+    <select id="getByProjectIdProject" parameterType="String" resultMap="BaseResultMap">
+        select * from at_project where project_id = #{projectId} and is_delete=1
     </select>
 </mapper>

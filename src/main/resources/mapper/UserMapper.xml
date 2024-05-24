@@ -121,7 +121,7 @@
         </where>
     </select>
     <select id="selectUserByEmailAndPassword" parameterType="com.annotation.tool.entity.UserEntity" resultType="com.annotation.tool.entity.UserEntity">
-        select * from at_user
+        select at_user.*,power from at_user join bshe.at_user_project aup on at_user.id = aup.user_id
         <where>
             `email`=#{userEntity.email} and
             `password`=#{userEntity.password} and

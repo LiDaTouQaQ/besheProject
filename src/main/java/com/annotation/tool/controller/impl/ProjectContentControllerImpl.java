@@ -142,4 +142,10 @@ public class ProjectContentControllerImpl implements ProjectContentController {
         String projectId = MapUtils.getString(params,"projectId");
         return projectContentService.countUserWork(projectId);
     }
+
+    @Override
+    @PostMapping(value = "checkPred")
+    public Result checkPredResult(@RequestBody Map<String, Object> params) {
+        return projectContentService.checkPredResult(params);
+    }
 }

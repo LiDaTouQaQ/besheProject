@@ -20,4 +20,6 @@ public interface ProjectController {
 
     Result deleteProject(Map<String,Object> params);
 
+    Result getOneProject(Map<String,Object> params);
+
 }

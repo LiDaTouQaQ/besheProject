@@ -1,6 +1,7 @@
 package com.annotation.tool.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.excel.util.CollectionUtils;
 import com.annotation.tool.entity.*;
 import com.annotation.tool.mapper.*;
 import com.annotation.tool.util.RandomColorUtil;
@@ -13,6 +14,7 @@ import com.annotation.tool.util.ResultGeneratorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -260,6 +262,20 @@ public class ProjectContentServiceImpl implements ProjectContentService {
         return ResultGeneratorUtil.genSuccessResult("添加成功");
     }
 
+    private void insertEntity(ContentEntityEntity entity){
+        if(entity.getToRelationId() == null){
+            int maxId = 0;
+            try {
+                maxId = contentEntityMapper.getMaxToRelationIdByProjectIdAndProjectContentId(entity.getProjectId(), entity.getProjectContentId());
+            }catch (Exception e){
+                maxId = 0;
+            }
+            entity.setToRelationId(String.valueOf(maxId+1));
+        }
+        contentEntityMapper.insertEntity(entity);
+        atEntityMapper.addEntityNum(entity.getProjectId(), String.valueOf(entity.getEntityId()));
+    }
+
     @Override
     public int maxContentID(String projectId) {
         String max = projectContentMapper.maxProjectContentIdByProjectId(projectId);
@@ -332,5 +348,59 @@ public class ProjectContentServiceImpl implements ProjectContentService {
             result.add(map);
         }
         return ResultGeneratorUtil.genSuccessResult(result);
+    }
+
+    @Override
+    public Result checkPredResult(Map<String, Object> params) {
+        String projectId = MapUtils.getString(params,"projectId","");
+        String projectContentId = MapUtils.getString(params,"contentId","");
+        if(StringUtils.isEmpty(projectId) || StringUtils.isEmpty(projectContentId)){
+            return ResultGeneratorUtil.genFailResult(ResultEnum.UNKNOWN);
+        }
+        List<Map<String,Object>> predList = (List<Map<String, Object>>) params.get("pred_list");
+        if(CollectionUtils.isEmpty(predList)){
+            return ResultGeneratorUtil.genSuccessResult("预测结果为空");
+        }
+        // 处理内容 区分出实体和关系
+        for(Map<String,Object> item : predList){
+            ContentEntityEntity entityOne = new ContentEntityEntity();
+            ContentEntityEntity entityTwo = new ContentEntityEntity();
+            ContentRelationEntity relationEntity = new ContentRelationEntity();
+            entityOne.setProjectId(projectId);
+            entityTwo.setProjectId(projectId);
+            entityOne.setProjectContentId(projectContentId);
+            entityTwo.setProjectContentId(projectContentId);
+            entityOne.setEntityId(101);
+            entityOne.setEntityName("预测实体1");
+            entityTwo.setEntityId(102);
+            entityTwo.setEntityName("预测实体2");
+            entityOne.setEntityContent(MapUtils.getString(item,"entityOne",""));
+            entityOne.setStart(MapUtils.getInteger(item,"oneStart"));
+            entityOne.setEnd(MapUtils.getInteger(item,"oneEnd"));
+            entityTwo.setEntityContent(MapUtils.getString(item,"entityTwo",""));
+            entityTwo.setStart(MapUtils.getInteger(item,"twoStart"));
+            entityTwo.setEnd(MapUtils.getInteger(item,"twoEnd"));
+            insertEntity(entityOne);
+            insertEntity(entityTwo);
+            relationEntity.setProjectId(projectId);
+            relationEntity.setProjectContentId(projectContentId);
+            relationEntity.setForm(Integer.valueOf(entityOne.getToRelationId()));
+            relationEntity.setTo(Integer.valueOf(entityTwo.getToRelationId()));
+            relationEntity.setRelationName(MapUtils.getString(item,"relation",""));
+            RelationEntity relation = relationMapper.getRelationByRelationName(projectId,MapUtils.getString(item,"relation",""));
+            if(relation == null){
+                relation = new RelationEntity();
+                relation.setProjectId(projectId);
+                relation.setRelationName(MapUtils.getString(item,"relation",""));
+                relation.setSpanColor(RandomColorUtil.rgbToHex());
+                relation.setNum(0);
+                relationMapper.createRelation(relation);
+                relation = relationMapper.getRelationByRelationName(projectId,MapUtils.getString(item,"relation",""));
+            }
+            relationEntity.setRelationId(Integer.valueOf(relation.getId()));
+            contentRelationMapper.insertRelation(relationEntity);
+            relationMapper.addRelationNum(relationEntity.getProjectId(), String.valueOf(relationEntity.getRelationId()));
+        }
+        return ResultGeneratorUtil.genSuccessResult("自动标注成功");
     }
 }

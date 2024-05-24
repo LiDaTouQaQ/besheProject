@@ -8,6 +8,7 @@ import com.annotation.tool.entity.Result;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName ProjectContentService
@@ -43,5 +44,7 @@ public interface ProjectContentService {
     Result deleteRelation(ContentRelationEntity entity);
 
     Result countUserWork(String projectId);
+
+    Result checkPredResult(Map<String,Object> params);
 
 }

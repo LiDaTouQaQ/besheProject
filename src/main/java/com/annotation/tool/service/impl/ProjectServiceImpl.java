@@ -73,4 +73,10 @@ public class ProjectServiceImpl implements ProjectService {
         result.put("total",total);
         return ResultGeneratorUtil.genSuccessResult(result);
     }
+
+    @Override
+    public Result selectOneProject(String projectId) {
+        ProjectEntity entity = projectMapper.getByProjectIdProject(projectId);
+        return ResultGeneratorUtil.genSuccessResult(entity);
+    }
 }

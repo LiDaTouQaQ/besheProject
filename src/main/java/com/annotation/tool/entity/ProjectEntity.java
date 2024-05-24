@@ -52,4 +52,6 @@ public class ProjectEntity {
      * 是否已经删除
      */
     public String isDelete;
+
+    public String autoPort;
 }

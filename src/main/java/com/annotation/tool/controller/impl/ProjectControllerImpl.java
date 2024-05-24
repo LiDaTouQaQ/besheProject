@@ -57,4 +57,11 @@ public class ProjectControllerImpl implements ProjectController {
         List<String> projectId = (List<String>) params.get("projectId");
         return projectService.deleteProject(projectId);
     }
+
+    @Override
+    @PostMapping("/getOne")
+    public Result getOneProject(@RequestBody Map<String, Object> params) {
+        String projectId = MapUtils.getString(params,"projectId");
+        return projectService.selectOneProject(projectId);
+    }
 }

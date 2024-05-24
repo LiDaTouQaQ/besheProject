@@ -47,4 +47,6 @@ public interface ProjectContentController {
     Result deleteRelation(ContentRelationEntity entity);
 
     Result countUserWork(Map<String,Object> params);
+
+    Result checkPredResult(Map<String,Object> params);
 }
